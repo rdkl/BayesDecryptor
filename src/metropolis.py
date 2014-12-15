@@ -6,63 +6,106 @@ from process_data.get_bigram_frequency import get_bigram_frequency
 
 ##############################################################################
 class MetropolisPermutationGenerator(object):
-    def __init__(self, train_file="../data/war_and_peace.txt"):
-        self.train_text = open(train_file, "r").readlines()
-        self.train_bigram_distribuion = get_bigram_frequency(self.train_text) 
+    #-------------------------------------------------------------------------
+    def __init__(self):
+        self.__encrypted_text = []
+        self.__train_bigram_dist = {}
+
+    #-------------------------------------------------------------------------
+    def set_train_data(self, train_file="../data/war_and_peace.txt"):
+        if type(train_file) != list and type(train_file) != str:
+            raise TypeError("Incorrect argument type, list or string expected"
+                            ", but %s received" % (str(type(train_file))))          
+    
+        if type(train_file) == str:
+            train_text = open(train_file, "r").readlines()
+        if type(train_file) == list:
+            train_text = train_file
+            
+        self.__train_bigram_dist = get_bigram_frequency(train_text) 
         
+    #-------------------------------------------------------------------------
+    def set_encrypted_data(self, encrypted_file="../data/oliver_twist.txt"):
+        if type(encrypted_file) != list and type(encrypted_file) != str:
+            raise TypeError("Incorrect argument type, list or string expected"
+                            ", but %s received" % (str(type(encrypted_file))))          
+    
+        if type(encrypted_file) == str:
+            self.__encrypted_text = open(encrypted_file, "r").readlines()
+        if type(encrypted_file) == list:
+            self.__encrypted_text = encrypted_file
+            
+    #-------------------------------------------------------------------------
+    def __get_next_permutation(self, perm):
+        # Get two letters.
+        (first, second) = random.sample(string.lowercase, 2)
+        
+        temp = perm[first]
+        perm[first] = perm[second]
+        perm[second] = temp
+        
+        return perm
+
+    #-------------------------------------------------------------------------
+    def __get_start_permutation(self):
+        likelihood = 0
+        while likelihood == 0:
+            letters_list = list(string.lowercase)
+            random.shuffle(letters_list)
+            letters = ''.join(letters_list)
+            perm = dict(zip(string.lowercase, letters))
+            likelihood = estimate_likelihood(self.__encrypted_text, 
+                                             self.__train_bigram_dist, perm)
+            # print likelihood
+            
+        return perm, likelihood
+    
+    #-------------------------------------------------------------------------
+    def __one_iteration(self, perm, likelihood):
+        
+        candidate = self.__get_next_permutation(perm)
+        candidate_likelihood = estimate_likelihood(self.__e, 
+                                                   self.__bigram_distribution, 
+                                                   candidate)
+        if candidate_likelihood == 0.0:
+            return perm, likelihood
+        
+        candidate_probability = min(1, candidate_likelihood / likelihood)
+        if candidate_probability > random.random():
+            return candidate, candidate_likelihood
+        
+        return perm, likelihood
+    
+    #-------------------------------------------------------------------------
+    def generate_permutation(self, number_of_iterations, 
+                             train_file=None, encrypted_file=None):
+        if train_file is None and self.__train_bigram_dist == {}:
+            raise ValueError("Train data wasn't set.")
+        
+        if encrypted_file is None and self.__encrypted_text == []:
+            raise ValueError("Encrypted data wasn't set.")
+        
+        current_perm, current_likelihood = self.__get_start_permutation()
+        best_perm = current_perm
+        best_likelihood = current_likelihood 
+        
+        for _ in xrange(number_of_iterations):
+            current_perm, current_likelihood = \
+                self.__one_iteration(current_perm, current_likelihood)
+                
+            if best_likelihood < current_likelihood:
+                best_perm = current_perm
+                best_likelihood = current_likelihood
+        
+        return best_perm
+    
+    #-------------------------------------------------------------------------
 ##############################################################################
     
 #-----------------------------------------------------------------------------
-def get_start_permutation(text, bigram_distribution):
-    likelihood = 0
-    while likelihood == 0:
-        letters_list = list(string.lowercase)
-        random.shuffle(letters_list)
-        letters = ''.join(letters_list)
-        perm = dict(zip(string.lowercase, letters))
-        likelihood = estimate_likelihood(train_file, bigram_distribution, 
-                                         perm)
-        
-    return perm, likelihood
-    
-#-----------------------------------------------------------------------------
-def get_next_permutation(perm):
-    # Get two letters.
-    (first, second) = random.sample(string.lowercase, 2)
-    
-    temp = perm[first]
-    perm[first] = perm[second]
-    perm[second] = temp
-    
-    return perm
-
-#-----------------------------------------------------------------------------
-def metropolis(perm, likelihood, train_text, bigram_distribution):
-    
-    candidate = get_next_permutation(perm)
-    candidate_likelihood = estimate_likelihood(train_text, 
-                                               bigram_distribution, 
-                                               candidate)
-    if candidate_likelihood == 0.0:
-        return perm, likelihood
-    
-    candidate_probability = min(1, candidate_likelihood / likelihood)
-    if candidate_probability > random.random():
-        return candidate, candidate_likelihood
-    
-    return perm, likelihood
-
-#-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    train_file = "../data/war_and_peace.txt"
-    train_text = open(train_file, "r").readlines()
-    train_bigram_distribuion = get_bigram_frequency(train_text) 
+    permGenerator = MetropolisPermutationGenerator()
+    permGenerator.set_train_data()
+    permGenerator.set_encrypted_data()
     
-    start_perm, likelihood = get_start_permutation(train_text, 
-                                       train_bigram_distribuion)
-    
-    for i in xrange(25):
-        start_perm, likelihood = metropolis(start_perm, likelihood, 
-                                            train_text,
-                                            train_bigram_distribuion)
-        print start_perm
+    permGenerator.generate_permutation(20)

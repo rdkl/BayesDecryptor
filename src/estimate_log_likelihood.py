@@ -16,6 +16,8 @@ def estimate_log_likelihood(text, bigram_dist, perm, threshold = 10**(-11)):
             for i in xrange(len(word) - 1):
                 bigram_probability = bigram_dist[perm[word[i]] + \
                                                  perm[word[i + 1]]]
+                #if bigram_probability == 0.0:
+                #    print word, perm[word[i]] + perm[word[i + 1]]
                 log_likelihood += math.log(max(bigram_probability, 
                                                 threshold))
     

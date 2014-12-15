@@ -1,25 +1,30 @@
 from sys import argv
 import random
-from numpy.random import rand
 
-p = range(26)
-random.shuffle(p)
+def crypt(output_filename, input_files):
+    p = range(26)
+    random.shuffle(p)
 
-output = open(argv[1], "w")
+    output = open(output_filename, "w")
 
-for fname in argv[2:]:
-	f = open(fname, "r")
+    for fname in input_files:
+        f = open(fname, "r")
+    
+    for line in f.readlines():
+        for ch in line.strip():
+            try:
+                x = ord(ch) - ord('a')
+                output.write(chr(p[x] + ord('a')))
+            except:
+                print '{} unsupported'.format(ch)
+                output.write('\n')
+    
+    output.close()
+    
+    for i in xrange(len(p)):
+        print '{} -> {}'.format(chr(ord('a') + i), chr(ord('a') + p[i]))
 
-	for line in f.readlines():
-		for ch in line.strip():
-			try:
-				x = ord(ch) - ord('a')
-				output.write(chr(p[x] + ord('a')))
-			except:
-				print '{} unsupported'.format(ch)
-		output.write('\n')
-
-output.close()
-
-for i in xrange(len(p)):
-	print '{} -> {}'.format(chr(ord('a') + i), chr(ord('a') + p[i]))
+#-----------------------------------------------------------------------------
+if __name__ == "__main__":
+    crypt(argv[1], argv[2:])
+    

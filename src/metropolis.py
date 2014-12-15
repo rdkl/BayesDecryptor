@@ -1,8 +1,10 @@
+import math
 import random
 import string
 
-from estimate_likelihood import estimate_likelihood
+from estimate_log_likelihood import estimate_log_likelihood
 from process_data.get_bigram_frequency import get_bigram_frequency
+
 
 ##############################################################################
 class MetropolisPermutationGenerator(object):
@@ -48,33 +50,41 @@ class MetropolisPermutationGenerator(object):
 
     #-------------------------------------------------------------------------
     def __get_start_permutation(self):
-        likelihood = 0
-        while likelihood == 0:
-            letters_list = list(string.lowercase)
-            random.shuffle(letters_list)
-            letters = ''.join(letters_list)
-            perm = dict(zip(string.lowercase, letters))
-            likelihood = estimate_likelihood(self.__encrypted_text, 
-                                             self.__train_bigram_dist, perm)
-            # print likelihood
+        letters_list = list(string.lowercase)
+        random.shuffle(letters_list)
+        letters = ''.join(letters_list)
+        perm = dict(zip(string.lowercase, letters))
+        log_likelihood = estimate_log_likelihood(self.__encrypted_text, 
+                                         self.__train_bigram_dist, perm)
             
-        return perm, likelihood
+        return perm, log_likelihood
     
     #-------------------------------------------------------------------------
-    def __one_iteration(self, perm, likelihood):
+    def __one_iteration(self, perm, log_likelihood):
         
         candidate = self.__get_next_permutation(perm)
-        candidate_likelihood = estimate_likelihood(self.__e, 
-                                                   self.__bigram_distribution, 
+        candidate_log_likelihood = estimate_log_likelihood(
+                                                   self.__encrypted_text, 
+                                                   self.__train_bigram_dist, 
                                                    candidate)
-        if candidate_likelihood == 0.0:
-            return perm, likelihood
         
-        candidate_probability = min(1, candidate_likelihood / likelihood)
+        # print candidate_log_likelihood, log_likelihood, 
+        # print candidate_log_likelihood - log_likelihood
+        
+        # Probability is equal to one.
+        if candidate_log_likelihood > log_likelihood:
+            return candidate, candidate_log_likelihood
+        
+        # Probability is equal to zero. Fixing overflow error.
+        if candidate_log_likelihood < log_likelihood - 10000:
+            return perm, log_likelihood
+        
+        candidate_probability = min(1, 
+                    math.exp(candidate_log_likelihood - log_likelihood))
         if candidate_probability > random.random():
-            return candidate, candidate_likelihood
+            return candidate, candidate_log_likelihood
         
-        return perm, likelihood
+        return perm, log_likelihood
     
     #-------------------------------------------------------------------------
     def generate_permutation(self, number_of_iterations, 
@@ -85,17 +95,18 @@ class MetropolisPermutationGenerator(object):
         if encrypted_file is None and self.__encrypted_text == []:
             raise ValueError("Encrypted data wasn't set.")
         
-        current_perm, current_likelihood = self.__get_start_permutation()
+        current_perm, current_log_likelihood = self.__get_start_permutation()
         best_perm = current_perm
-        best_likelihood = current_likelihood 
+        best_log_likelihood = current_log_likelihood 
         
         for _ in xrange(number_of_iterations):
-            current_perm, current_likelihood = \
-                self.__one_iteration(current_perm, current_likelihood)
+            current_perm, current_log_likelihood = \
+                self.__one_iteration(current_perm, current_log_likelihood)
                 
-            if best_likelihood < current_likelihood:
+            # print current_log_likelihood
+            if best_log_likelihood < current_log_likelihood:
                 best_perm = current_perm
-                best_likelihood = current_likelihood
+                best_log_likelihood = current_log_likelihood
         
         return best_perm
     
@@ -108,4 +119,4 @@ if __name__ == "__main__":
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     
-    permGenerator.generate_permutation(20)
+    permGenerator.generate_permutation(100)

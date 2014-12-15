@@ -1,0 +1,4 @@
+To encrypt the file with random permutation use the crypt.py program:
+ python crypt.py OUTPUT_FILE INPUT_FILE1 INPUT_FILE2 ... INPUT_FILEN
+
+For most situations we recommend using war_and_peace.txt as training text and oliver_twist.txt for encryption. If it is not enough, we provide super.txt which contains over 82 million words for either training or decryption. 

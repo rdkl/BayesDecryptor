@@ -58,3 +58,9 @@ target/
 .project
 .pydevproject
 
+
+# PyCharm
+.idea/
+
+# vim swap files
+*.swp

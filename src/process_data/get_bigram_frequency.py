@@ -1,10 +1,19 @@
 from collections import Counter
 
-def get_bigram_frequency(input_filename):
-    training = open(input_filename, "r")
+def get_bigram_frequency(input_arg):
+    if type(input_arg) != list and type(input_arg) != str:
+        raise TypeError("Incorrect argument type, list or string expected, but"
+                        "%s received" % str(type(input_arg)))          
+    
+    if type(input_arg) == list :
+        train_text = input_arg
+    else:
+        f = open(input_arg, "r")
+        train_text = f.readlines()
+        
     bigram_counter = Counter()
 
-    for line in training.readlines():
+    for line in train_text:
         line = line.strip()
         for word in line.split():
             for i in xrange(len(word) - 1):
@@ -13,7 +22,10 @@ def get_bigram_frequency(input_filename):
     bigram_number = sum(bigram_counter.values())
     for key in bigram_counter.keys():
         bigram_counter[key] /= bigram_number
-    training.close()
+    
+    if type(input_arg) == str:
+        f.close()
+        
     return bigram_counter
 
 #-----------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 from collections import Counter
 
+
 def get_bigram_frequency(input_arg):
     if type(input_arg) != list and type(input_arg) != str:
         raise TypeError("Incorrect argument type, list or string expected, but"
@@ -30,5 +31,4 @@ def get_bigram_frequency(input_arg):
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    print get_bigram_frequency("../../data/test.txt")
-    
+    counter = get_bigram_frequency("../../data/war_and_peace.txt")

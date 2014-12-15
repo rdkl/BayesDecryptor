@@ -1,9 +1,18 @@
 from collections import Counter
 
 def get_bigram_frequency(input_arg):
+    if type(input_arg) != list and type(input_arg) != str:
+        raise TypeError("Incorrect argument type, list or string expected, but"
+                        "%s received" % str(type(input_arg)))          
+    
     if type(input_arg) == list :
+<<<<<<< HEAD
         train_text = input_arg
     else:
+=======
+        training = input_arg
+    else
+>>>>>>> a807d2f3c6a430af5882285faa974c09f3848235
         f = open(input_arg, "r")
         train_text = f.readlines()
         

@@ -13,6 +13,7 @@ def get_bigram_frequency(input_filename):
     bigram_number = sum(bigram_counter.values())
     for key in bigram_counter.keys():
         bigram_counter[key] /= bigram_number
+    training.close()
     return bigram_counter
 
 #-----------------------------------------------------------------------------

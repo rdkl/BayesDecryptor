@@ -18,7 +18,8 @@ def crypt(output_filename, input_filenames):
                 except:
                     print '{} unsupported'.format(ch)
                     output.write('\n')
-        
+            output.write('\n')
+        f.close()    
     output.close()
     
     for i in xrange(len(p)):

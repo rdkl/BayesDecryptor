@@ -4,7 +4,14 @@ import string
 from estimate_likelihood import estimate_likelihood
 from process_data.get_bigram_frequency import get_bigram_frequency
 
-
+##############################################################################
+class MetropolisPermutationGenerator(object):
+    def __init__(self, train_file="../data/war_and_peace.txt"):
+        self.train_text = open(train_file, "r").readlines()
+        self.train_bigram_distribuion = get_bigram_frequency(self.train_text) 
+        
+##############################################################################
+    
 #-----------------------------------------------------------------------------
 def get_start_permutation(text, bigram_distribution):
     likelihood = 0
@@ -30,10 +37,12 @@ def get_next_permutation(perm):
     return perm
 
 #-----------------------------------------------------------------------------
-def metropolis(perm, likelihood):
+def metropolis(perm, likelihood, train_text, bigram_distribution):
     
     candidate = get_next_permutation(perm)
-    candidate_likelihood = estimate_likelihood(candidate)
+    candidate_likelihood = estimate_likelihood(train_text, 
+                                               bigram_distribution, 
+                                               candidate)
     if candidate_likelihood == 0.0:
         return perm, likelihood
     
@@ -46,9 +55,14 @@ def metropolis(perm, likelihood):
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
     train_file = "../data/war_and_peace.txt"
-    train_text = open(train_file, "r")
+    train_text = open(train_file, "r").readlines()
     train_bigram_distribuion = get_bigram_frequency(train_text) 
     
-    start_perm = get_start_permutation(train_text, 
+    start_perm, likelihood = get_start_permutation(train_text, 
                                        train_bigram_distribuion)
     
+    for i in xrange(25):
+        start_perm, likelihood = metropolis(start_perm, likelihood, 
+                                            train_text,
+                                            train_bigram_distribuion)
+        print start_perm

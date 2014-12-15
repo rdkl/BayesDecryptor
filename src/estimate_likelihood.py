@@ -11,9 +11,6 @@ def estimate_likelihood(text, bigram_cnt, perm):
         for word in line.split():
             for i in xrange(len(word) - 1):
                 likelihood *= bigram_cnt[perm[word[i]] + perm[word[i + 1]]]
-                print perm[word[i]] + perm[word[i + 1]], \
-                        bigram_cnt[perm[word[i]] + perm[word[i + 1]]]
-
         
     return likelihood
 

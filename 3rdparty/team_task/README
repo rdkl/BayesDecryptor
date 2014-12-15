@@ -1,0 +1,4 @@
+Use crypt_and_corrupt.py similarly to crypt.py for the main task:
+  python crypt_and_corrupt.py OUTPUT_FILE ALPHA INPUT1 INPUT2 ... INPUTN
+
+0 <= ALPHA <= 1 specifies the probability that current symbol would be corrupted (except for starting symbols and for symbols which predecessors were corrupted)

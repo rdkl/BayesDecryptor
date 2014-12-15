@@ -29,6 +29,19 @@ def get_next_permutation(perm):
     
     return perm
 
+#-----------------------------------------------------------------------------
+def metropolis(perm, likelihood):
+    
+    candidate = get_next_permutation(perm)
+    candidate_likelihood = estimate_likelihood(candidate)
+    if candidate_likelihood == 0.0:
+        return perm, likelihood
+    
+    candidate_probability = min(1, candidate_likelihood / likelihood)
+    if candidate_probability > random.random():
+        return candidate, candidate_likelihood
+    
+    return perm, likelihood
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":

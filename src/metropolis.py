@@ -8,7 +8,7 @@ from process_data.get_bigram_frequency import get_bigram_frequency
 #-----------------------------------------------------------------------------
 def get_start_permutation(text, bigram_distribution):
     likelihood = 0
-    while likelihood is 0:
+    while likelihood == 0:
         letters_list = list(string.lowercase)
         random.shuffle(letters_list)
         letters = ''.join(letters_list)
@@ -16,7 +16,7 @@ def get_start_permutation(text, bigram_distribution):
         likelihood = estimate_likelihood(train_file, bigram_distribution, 
                                          perm)
         
-    return perm
+    return perm, likelihood
     
 #-----------------------------------------------------------------------------
 def get_next_permutation(perm):
@@ -28,6 +28,7 @@ def get_next_permutation(perm):
     perm[second] = temp
     
     return perm
+
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":

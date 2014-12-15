@@ -2,14 +2,14 @@ from collections import Counter
 
 def get_bigram_frequency(input_arg):
     if type(input_arg) == list :
-        training = input_arg
+        train_text = input_arg
     else:
         f = open(input_arg, "r")
-        training = f.readlines()
+        train_text = f.readlines()
         
     bigram_counter = Counter()
 
-    for line in training:
+    for line in train_text:
         line = line.strip()
         for word in line.split():
             for i in xrange(len(word) - 1):
@@ -21,6 +21,7 @@ def get_bigram_frequency(input_arg):
     
     if type(input_arg) == str:
         f.close()
+        
     return bigram_counter
 
 #-----------------------------------------------------------------------------

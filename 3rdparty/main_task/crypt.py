@@ -22,8 +22,9 @@ def crypt(output_filename, input_filenames):
         f.close()    
     output.close()
     
-    for i in xrange(len(p)):
-        print '{} -> {}'.format(chr(ord('a') + i), chr(ord('a') + p[i]))
+    with open('../../data/perm.txt', 'w') as f:
+        for i in xrange(len(p)):
+            print >>f, chr(ord('a') + i), chr(ord('a') + p[i])
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":

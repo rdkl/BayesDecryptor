@@ -9,7 +9,7 @@ def crypt(output_filename, input_filenames):
 
     for fname in input_filenames:
         f = open(fname, "r")
-    
+        
         for line in f.readlines():
             for ch in line.strip():
                 try:
@@ -29,4 +29,3 @@ def crypt(output_filename, input_filenames):
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
     crypt(argv[1], argv[2:])
-    

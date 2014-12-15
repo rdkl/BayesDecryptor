@@ -53,4 +53,8 @@ docs/_build/
 # PyBuilder
 target/
 
+# Project and eclipse PyDev
 /data/
+.project
+.pydevproject
+

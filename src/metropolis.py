@@ -19,6 +19,17 @@ def get_start_permutation(text, bigram_distribution):
     return perm
     
 #-----------------------------------------------------------------------------
+def get_next_permutation(perm):
+    # Get two letters.
+    (first, second) = random.sample(string.lowercase, 2)
+    
+    temp = perm[first]
+    perm[first] = perm[second]
+    perm[second] = temp
+    
+    return perm
+
+#-----------------------------------------------------------------------------
 if __name__ == "__main__":
     train_file = "../data/war_and_peace.txt"
     train_text = open(train_file, "r")

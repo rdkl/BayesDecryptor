@@ -91,8 +91,6 @@ class MetropolisPermutationGenerator(object):
                                                    self.__train_bigram_dist, 
                                                    candidate)
         
-        # print candidate_log_likelihood, log_likelihood, 
-        # print candidate_log_likelihood - log_likelihood
         
         # Probability is equal to one.
         if candidate_log_likelihood > log_likelihood:
@@ -101,6 +99,10 @@ class MetropolisPermutationGenerator(object):
         # Probability is equal to zero. Fixing overflow error.
         if candidate_log_likelihood < log_likelihood - 10000:
             return perm, log_likelihood
+        
+        print candidate_log_likelihood, log_likelihood, 
+        print math.exp(candidate_log_likelihood - log_likelihood)
+        print candidate
         
         candidate_probability = min(1, 
                     math.exp(candidate_log_likelihood - log_likelihood))
@@ -112,7 +114,7 @@ class MetropolisPermutationGenerator(object):
     #-------------------------------------------------------------------------
     def generate_permutation(self, number_of_iterations, 
                              train_file=None, encrypted_file=None, 
-                             use_log_likelihood = False):
+                             use_log_likelihood = True):
         
         self.__log_likelihood_flag = use_log_likelihood
         
@@ -133,7 +135,8 @@ class MetropolisPermutationGenerator(object):
                     self.__one_iteration_with_log_likelihood(current_perm, 
                                          current_log_likelihood)
                 
-                print current_log_likelihood
+                # print current_perm
+                # print current_log_likelihood
                 if best_log_likelihood < current_log_likelihood:
                     best_perm = current_perm
                     best_log_likelihood = current_log_likelihood
@@ -166,6 +169,6 @@ if __name__ == "__main__":
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     
-    perm = permGenerator.generate_permutation(125)
+    perm = permGenerator.generate_permutation(2000)
     for key in sorted(perm.keys()):
         print key, perm[key]

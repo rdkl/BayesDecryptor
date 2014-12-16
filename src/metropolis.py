@@ -108,8 +108,10 @@ class MetropolisPermutationGenerator(object):
             return perm, log_likelihood
         
         
-        candidate_probability = min(1, 
-                    math.exp(candidate_log_likelihood - log_likelihood))
+        # candidate_probability = min(1, 
+        #             math.exp(candidate_log_likelihood - log_likelihood))
+        candidate_probability = min(0, 
+                    candidate_log_likelihood - log_likelihood)
         if candidate_probability > random.random():
             print candidate_log_likelihood, log_likelihood, 
             print candidate_log_likelihood - log_likelihood
@@ -179,6 +181,10 @@ if __name__ == "__main__":
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     
-    perm = permGenerator.generate_permutation(2999)
+    perm = permGenerator.generate_permutation(2000)
     for key in sorted(perm.keys()):
         print key, perm[key]
+        
+    with open('../data/perm_metropolis.txt', 'w') as f:
+        for key in sorted(perm.keys()):
+            print >>f, key, perm[key]

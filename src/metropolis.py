@@ -11,7 +11,7 @@ from process_data.get_bigram_frequency import get_bigram_frequency
 ##############################################################################
 class MetropolisPermutationGenerator(object):
     #-------------------------------------------------------------------------
-    def __init__(self, path_to_data="../data/", print_info=50, 
+    def __init__(self, path_to_data="../data/", print_info=True, 
                  output_filename="test_results"):
         
         self.__encrypted_text = []
@@ -112,7 +112,8 @@ class MetropolisPermutationGenerator(object):
         
         # Probability is equal to one.
         if candidate_log_likelihood > log_likelihood:
-            print_candidate(candidate_log_likelihood, log_likelihood, 
+            if self.__print_info:
+                print_candidate(candidate_log_likelihood, log_likelihood, 
                             candidate)
             return candidate, candidate_log_likelihood
         
@@ -189,7 +190,7 @@ class MetropolisPermutationGenerator(object):
     
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    permGenerator = MetropolisPermutationGenerator()
+    permGenerator = MetropolisPermutationGenerator(print_info=False)
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     

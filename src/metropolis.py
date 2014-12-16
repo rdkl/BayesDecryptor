@@ -92,6 +92,10 @@ class MetropolisPermutationGenerator(object):
                                                    candidate)
         
         
+        print candidate_log_likelihood, log_likelihood, 
+        print candidate_log_likelihood - log_likelihood
+        print candidate
+        
         # Probability is equal to one.
         if candidate_log_likelihood > log_likelihood:
             return candidate, candidate_log_likelihood
@@ -100,9 +104,6 @@ class MetropolisPermutationGenerator(object):
         if candidate_log_likelihood < log_likelihood - 10000:
             return perm, log_likelihood
         
-        print candidate_log_likelihood, log_likelihood, 
-        print math.exp(candidate_log_likelihood - log_likelihood)
-        print candidate
         
         candidate_probability = min(1, 
                     math.exp(candidate_log_likelihood - log_likelihood))

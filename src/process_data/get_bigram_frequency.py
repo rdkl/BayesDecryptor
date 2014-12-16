@@ -22,9 +22,9 @@ def get_bigram_frequency(input_arg):
         for word in line.split():
             for i in xrange(len(word) - 1):
                 bigram_counter[word[i:i + 2]] += 1.0
-                bigram_normilizer[word[i]] += 1.0
+                bigram_normilizer[word[i + 1]] += 1.0
                 if i == 0:
-                    bigram_counter[un_key][word[i + 1]] += 1.0
+                    bigram_counter[un_key][word[i]] += 1.0
         
     bigram_number = sum(bigram_counter[un_key].values())
     for key in bigram_counter.keys():

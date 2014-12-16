@@ -1,3 +1,4 @@
+import copy
 import math
 import random
 import string
@@ -41,13 +42,14 @@ class MetropolisPermutationGenerator(object):
     #-------------------------------------------------------------------------
     def __get_next_permutation(self, perm):
         # Get two letters.
+        new_perm = copy.deepcopy(perm)
         (first, second) = random.sample(string.lowercase, 2)
         
-        temp = perm[first]
-        perm[first] = perm[second]
-        perm[second] = temp
+        temp = new_perm[first]
+        new_perm[first] = new_perm[second]
+        new_perm[second] = temp
         
-        return perm
+        return new_perm
 
     #-------------------------------------------------------------------------
     def __get_start_permutation(self):
@@ -92,12 +94,13 @@ class MetropolisPermutationGenerator(object):
                                                    candidate)
         
         
-        print candidate_log_likelihood, log_likelihood, 
-        print candidate_log_likelihood - log_likelihood
         
         # Probability is equal to one.
         if candidate_log_likelihood > log_likelihood:
+            print candidate_log_likelihood, log_likelihood, 
+            print candidate_log_likelihood - log_likelihood
             print candidate
+            #print perm 
             return candidate, candidate_log_likelihood
         
         # Probability is equal to zero. Fixing overflow error.
@@ -108,7 +111,10 @@ class MetropolisPermutationGenerator(object):
         candidate_probability = min(1, 
                     math.exp(candidate_log_likelihood - log_likelihood))
         if candidate_probability > random.random():
+            print candidate_log_likelihood, log_likelihood, 
+            print candidate_log_likelihood - log_likelihood
             print candidate
+            #print perm
             return candidate, candidate_log_likelihood
         
         return perm, log_likelihood
@@ -132,7 +138,7 @@ class MetropolisPermutationGenerator(object):
             best_perm = current_perm
             best_log_likelihood = current_log_likelihood 
             
-            for _ in xrange(number_of_iterations):
+            for i in xrange(number_of_iterations):
                 current_perm, current_log_likelihood = \
                     self.__one_iteration_with_log_likelihood(current_perm, 
                                          current_log_likelihood)
@@ -142,6 +148,8 @@ class MetropolisPermutationGenerator(object):
                 if best_log_likelihood < current_log_likelihood:
                     best_perm = current_perm
                     best_log_likelihood = current_log_likelihood
+                if i % 100 == 0:
+                    print i
             
             return best_perm
         else:
@@ -171,6 +179,6 @@ if __name__ == "__main__":
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     
-    perm = permGenerator.generate_permutation(2000)
+    perm = permGenerator.generate_permutation(2999)
     for key in sorted(perm.keys()):
         print key, perm[key]

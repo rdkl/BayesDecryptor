@@ -13,7 +13,8 @@ def estimate_log_likelihood(text, bigram_dist, perm, threshold = 10**(-4)):
     for line in text:
         line = line.strip()
         for word in line.split():
-            log_likelihood += math.log(bigram_dist["unigram"][word[0]])
+            log_likelihood += 1 / 26.0 
+            #math.log(bigram_dist["unigram"][word[0]])
             for i in xrange(len(word) - 1):
                 bigram_probability = bigram_dist[perm[word[i]] + \
                                                  perm[word[i + 1]]]

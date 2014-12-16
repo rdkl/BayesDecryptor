@@ -28,7 +28,7 @@ def estimate_likelihood(text, bigram_dist, perm):
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    print estimate_likelihood_words(["bfbf aa"], 
+    print estimate_likelihood(["bfbf aa"], 
                               get_bigram_frequency("../data/test.txt"), 
                               {"a":"f", "b":"a", "f":"b"})
     

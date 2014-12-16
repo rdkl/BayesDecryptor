@@ -3,7 +3,7 @@ import math
 from process_data.get_bigram_frequency import get_bigram_frequency
 
 #-----------------------------------------------------------------------------
-def estimate_likelihood_words(text, bigram_dist, perm):
+def estimate_likelihood(text, bigram_dist, perm):
     '''
     perm is a dictionary: perm[encoded letter] = decoded letter
     '''    
@@ -28,7 +28,7 @@ def estimate_likelihood_words(text, bigram_dist, perm):
 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    print estimate_likelihood(["bfbf aa"], 
+    print estimate_likelihood_words(["bfbf aa"], 
                               get_bigram_frequency("../data/test.txt"), 
                               {"a":"f", "b":"a", "f":"b"})
     

@@ -2,9 +2,9 @@ import math
 import random
 import string
 
-from src.estimate_likelihood import estimate_likelihood
-from src.estimate_log_likelihood import estimate_log_likelihood
-from src.process_data.get_bigram_frequency import get_bigram_frequency
+from estimate_likelihood import estimate_likelihood
+from estimate_log_likelihood import estimate_log_likelihood
+from process_data.get_bigram_frequency import get_bigram_frequency
 
 
 ##############################################################################

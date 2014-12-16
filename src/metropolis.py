@@ -8,13 +8,16 @@ from estimate_log_likelihood import estimate_log_likelihood
 from process_data.get_bigram_frequency import get_bigram_frequency
 
 
+test_msg = "_only_improvements_4"
+
 ##############################################################################
 class MetropolisPermutationGenerator(object):
     #-------------------------------------------------------------------------
     def __init__(self):
         self.__encrypted_text = []
         self.__train_bigram_dist = {}
-    
+        self.__test_file = open("../data/test"+ str(test_msg) + ".txt", "w")
+
     #-------------------------------------------------------------------------
     def set_train_data(self, train_file="../data/war_and_peace.txt"):
         if type(train_file) != list and type(train_file) != str:
@@ -73,7 +76,7 @@ class MetropolisPermutationGenerator(object):
         candidate_likelihood = estimate_likelihood(self.__encrypted_text, 
                                                    self.__train_bigram_dist, 
                                                    candidate)
-        
+                
         # Probability is equal to one.
         if candidate_likelihood > likelihood:
             return candidate, candidate_likelihood
@@ -86,21 +89,28 @@ class MetropolisPermutationGenerator(object):
     
     #-------------------------------------------------------------------------
     def __one_iteration_with_log_likelihood(self, perm, log_likelihood):
-        
+        def print_candidate(candidate_log_l, log_l, candidate):
+            out = "New ll = %.2f, " % candidate_log_l
+            out += "old ll = %.2f, " % log_l
+            out += "diff = %.2f\n" % (candidate_log_l - log_l)
+            
+            for key in string.lowercase:
+                out += " " + key + ":" + candidate[key]
+            
+            print out + "\n"
         candidate = self.__get_next_permutation(perm)
         candidate_log_likelihood = estimate_log_likelihood(
                                                    self.__encrypted_text, 
                                                    self.__train_bigram_dist, 
                                                    candidate)
         
+        # print >>self.__test_file, candidate_log_likelihood
         
         
         # Probability is equal to one.
         if candidate_log_likelihood > log_likelihood:
-            print candidate_log_likelihood, log_likelihood, 
-            print candidate_log_likelihood - log_likelihood
-            print candidate
-            #print perm 
+            print_candidate(candidate_log_likelihood, log_likelihood, 
+                            candidate)
             return candidate, candidate_log_likelihood
         
         # Probability is equal to zero. Fixing overflow error.
@@ -108,15 +118,11 @@ class MetropolisPermutationGenerator(object):
             return perm, log_likelihood
         
         
-        # candidate_probability = min(1, 
-        #             math.exp(candidate_log_likelihood - log_likelihood))
-        candidate_probability = min(0, 
-                    candidate_log_likelihood - log_likelihood)
+        candidate_probability = min(1, 
+                    math.exp(candidate_log_likelihood - log_likelihood))
         if candidate_probability > random.random():
-            print candidate_log_likelihood, log_likelihood, 
-            print candidate_log_likelihood - log_likelihood
-            print candidate
-            #print perm
+            print_candidate(candidate_log_likelihood, log_likelihood, 
+                            candidate)
             return candidate, candidate_log_likelihood
         
         return perm, log_likelihood
@@ -141,6 +147,8 @@ class MetropolisPermutationGenerator(object):
             best_log_likelihood = current_log_likelihood 
             
             for i in xrange(number_of_iterations):
+                print >>self.__test_file, i,
+                
                 current_perm, current_log_likelihood = \
                     self.__one_iteration_with_log_likelihood(current_perm, 
                                          current_log_likelihood)
@@ -150,15 +158,17 @@ class MetropolisPermutationGenerator(object):
                 if best_log_likelihood < current_log_likelihood:
                     best_perm = current_perm
                     best_log_likelihood = current_log_likelihood
+                    print >>self.__test_file, i, best_log_likelihood
+
                 if i % 100 == 0:
-                    print i
-            
+                    print "Iteration: ", i
+                
             return best_perm
         else:
             current_perm, current_likelihood = \
                 self.__get_start_permutation()
             best_perm = current_perm
-            best_likelihood = current_likelihood 
+            best_likelihood = current_likelihood
             
             for _ in xrange(number_of_iterations):
                 current_perm, current_likelihood = \
@@ -181,10 +191,11 @@ if __name__ == "__main__":
     permGenerator.set_train_data()
     permGenerator.set_encrypted_data()
     
-    perm = permGenerator.generate_permutation(2000)
+    perm = permGenerator.generate_permutation(2500)
     for key in sorted(perm.keys()):
         print key, perm[key]
         
-    with open('../data/perm_metropolis.txt', 'w') as f:
+    with open('../data/perm_metropolis' + str(test_msg) + '.txt', 
+              'w') as f:
         for key in sorted(perm.keys()):
             print >>f, key, perm[key]

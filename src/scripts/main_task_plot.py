@@ -21,7 +21,7 @@ class DataLoader(object):
                     continue
                 
                 try:
-                    number_of_iterations = int(line[1])
+                    number_of_iterations = line[1]
                     parameter = int(line[0])
                     values_list = [float(item) for item in line[2:]]
                 
@@ -111,6 +111,7 @@ class DataLoader(object):
                     self.extract_zeros_ratio_by_parameter_and_iteration_number(
                                                             parameter,
                                                             it)
+            
                 plot_data[it][0] += [parameter]
                 plot_data[it][1] += [zeros_ratio]
         
@@ -172,5 +173,6 @@ class DataLoader(object):
 ##############################################################################
 
 if __name__ == "__main__":
-    dl = DataLoader('../../data/main_task_5_2.txt')
-    dl.plot_zeros_ratio_by_parameter_and_iterations()
+    dl = DataLoader('../../data/main_task_5_3.txt')
+    # dl.plot_zeros_ratio_by_parameter_and_iterations()
+    dl.plot_stats_by_parameter_and_iterations()

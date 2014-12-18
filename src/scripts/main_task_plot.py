@@ -94,6 +94,45 @@ class DataLoader(object):
         plt.show(True)
     
     #-------------------------------------------------------------------------
+    def plot_zeros_ratio_by_parameter_and_iterations(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        
+        iteration_number_keys = set({})
+        for parameter in self.__data:
+            for item in self.__data[parameter].keys():
+                iteration_number_keys.add(item)
+        
+        plot_data = {item : [[], [], []] for item in iteration_number_keys}
+        
+        for parameter in self.__data:
+            for it in self.__data[parameter].keys():
+                zeros_ratio = \
+                    self.extract_zeros_ratio_by_parameter_and_iteration_number(
+                                                            parameter,
+                                                            it)
+                plot_data[it][0] += [parameter]
+                plot_data[it][1] += [zeros_ratio]
+        
+        for item in plot_data:
+            sorted_lists = sorted(izip(plot_data[item][0], 
+                                       plot_data[item][1]), 
+                                  reverse=True, 
+                                  key=lambda x: x[0])
+            plot_data[item][0], plot_data[item][1] = \
+                [[x[i] for x in sorted_lists] for i in [0, 1]]
+            
+            plt.plot(plot_data[item][0], plot_data[item][1], label=item, 
+                     marker = "o")
+            
+        ax.legend()
+        plt.ylim([0, 1])
+        plt.xlabel("Parameter")
+        plt.ylabel("Ratio of correct permutations")
+        plt.grid(True)
+        plt.show(True)
+    
+    #-------------------------------------------------------------------------
     def extract_stats_by_parameter(self, parameter):
         
         values_list = []
@@ -102,11 +141,15 @@ class DataLoader(object):
             values_list += self.__data[parameter][item]
         return np.mean(values_list), np.std(values_list)
     #-------------------------------------------------------------------------
-    def extract_stats_by_parameter_and_iteration_number(self, 
-                                                               parameter,
-                                                               it):
+    def extract_stats_by_parameter_and_iteration_number(self, parameter, it):
         values_list = self.__data[parameter][it]
         return np.mean(values_list), np.std(values_list)
+    
+    #-------------------------------------------------------------------------
+    def extract_zeros_ratio_by_parameter_and_iteration_number(self, 
+                                                               parameter, it):
+        values_list = np.array(self.__data[parameter][it])
+        return float(sum(values_list == 0)) / len(values_list)
     
     #-------------------------------------------------------------------------
     def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
@@ -130,4 +173,4 @@ class DataLoader(object):
 
 if __name__ == "__main__":
     dl = DataLoader('../../data/main_task_5_2.txt')
-    dl.plot_stats_by_parameter_and_iterations()
+    dl.plot_zeros_ratio_by_parameter_and_iterations()

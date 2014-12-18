@@ -8,7 +8,7 @@ test_msg = "_only_improvements_4"
 permGenerator = MetropolisPermutationGenerator(print_info = False)
 permGenerator.set_train_data()
 
-size = 25600
+size = 51200
 
 f = open("../data/oliver_twist.txt", "r")
 line_list = f.readlines()[0:size+1]
@@ -29,8 +29,8 @@ for key in unigram_counter.keys():
     unigram_counter[key] /= unigram_number
     
 err_mean = 0.0
-num_restarts = 50
-num_iter = 2500
+num_restarts = 30
+num_iter = 2000
 
 error = []
 

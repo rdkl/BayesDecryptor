@@ -1,4 +1,5 @@
 import collections
+from itertools import izip
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +8,7 @@ import numpy as np
 ##############################################################################
 class DataLoader(object):
     # Line format: ["number of iterations" "parameter" "values_list"] 
-    def __init__(self, path_to_file="../../data/main_task_4.txt"):
+    def __init__(self, path_to_file="../../data/main_task_5_2.txt"):
         self.__data = collections.Counter()
         
         with open(path_to_file, "r") as f:
@@ -61,7 +62,7 @@ class DataLoader(object):
             for item in self.__data[parameter].keys():
                 iteration_number_keys.add(item)
         
-        plot_data = {item : [[], []] for item in iteration_number_keys}
+        plot_data = {item : [[], [], []] for item in iteration_number_keys}
         
         for parameter in self.__data:
             for it in self.__data[parameter].keys():
@@ -72,11 +73,20 @@ class DataLoader(object):
                 ax.annotate("%.2f" % std, xy = (parameter + 10, mean))
                 plot_data[it][0] += [parameter]
                 plot_data[it][1] += [mean]
-                
+                plot_data[it][2] += [std]                        
+        
         for item in plot_data:
-            plt.scatter(plot_data[item][0], plot_data[item][1], marker="o", 
-                        label=item, color=np.random.rand(1, 3), )
-        print 4
+            sorted_lists = sorted(izip(plot_data[item][0], 
+                                       plot_data[item][1],
+                                       plot_data[item][2]), 
+                                  reverse=True, 
+                                  key=lambda x: x[0])
+            plot_data[item][0], plot_data[item][1], plot_data[item][2] = \
+                [[x[i] for x in sorted_lists] for i in range(3)]
+            
+            self.errorfill(plot_data[item][0], plot_data[item][1],
+                      plot_data[item][2], label=item) 
+                      # marker="o",  )
             
         ax.legend()
         plt.ylim([0, 1])
@@ -98,11 +108,26 @@ class DataLoader(object):
     #-------------------------------------------------------------------------
     def extract_data_by_parameter_and_iteration_number(self, parameter,
                                                        it):
-        
-        
         values_list = self.__data[parameter][it]
         return np.mean(values_list), np.std(values_list)
     
+    #-------------------------------------------------------------------------
+    def errorfill(self, x, y, yerr, label="", color=None, alpha_fill=0.1, 
+                  ax = None):
+        x = np.array(x)
+        y = np.array(y)
+        yerr = np.array(yerr)
+        ax = ax if ax is not None else plt.gca()
+        if color is None:
+            color = ax._get_lines.color_cycle.next()
+        if np.isscalar(yerr) or len(yerr) == len(y):
+            ymin = y - yerr
+            ymax = y + yerr
+        elif len(yerr) == 2:
+            ymin, ymax = yerr
+        ax.plot(x, y, color=color, label=label)
+        ax.fill_between(x, ymax, ymin, color=color, alpha=alpha_fill)
+        
     #-------------------------------------------------------------------------
 ##############################################################################
 

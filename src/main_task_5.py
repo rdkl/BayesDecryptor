@@ -47,8 +47,8 @@ num_iter = 50
 words_error = {}
 found_perm = {}
 for number_of_words in xrange(10, 541, 40):
-    unigram_counter = get_unigramm_counter(text[0:number_of_words])
-    permGenerator.set_encrypted_data(text[0:number_of_words])
+    unigram_counter = get_unigramm_counter(text[1000:1001 + number_of_words])
+    permGenerator.set_encrypted_data(text[1000:1001+number_of_words])
     error = range(num_iter)
     print number_of_words
     
@@ -56,10 +56,13 @@ for number_of_words in xrange(10, 541, 40):
         found_perm[i] = permGenerator.generate_permutation(2500)
         error[i] = quality(correct_perm, found_perm[i], unigram_counter)
     words_error[number_of_words] = error
-    print found_perm[np.argmin(error)], np.mean(error)
+    print found_perm[np.argmin(error)], np.min(error), np.mean(error), np.var(error)
     
-with open('../data/main_task_5_metropolis_3.txt', 'w') as f:
+with open('../data/main_task_5_greedy_from1000.txt', 'w') as f:
     for key in sorted(words_error.keys()):
-        print >>f, key, str(0), " ".join(map(str, words_error[key]))
+        print >>f, key, str(1), " ".join(map(str, words_error[key]))
 # metropolis - 0
 # greedy - 1
+# 3 - result to use
+# from1000 - start from 1000th word in text
+

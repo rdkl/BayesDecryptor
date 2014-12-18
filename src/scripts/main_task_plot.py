@@ -3,6 +3,7 @@ from itertools import izip
 
 import matplotlib.pyplot as plt
 import numpy as np
+from configglue.inischema.attributed import marker
 
 
 ##############################################################################
@@ -70,7 +71,6 @@ class DataLoader(object):
                     self.extract_data_by_parameter_and_iteration_number(
                                                                 parameter,
                                                                 it)
-                ax.annotate("%.2f" % std, xy = (parameter + 10, mean))
                 plot_data[it][0] += [parameter]
                 plot_data[it][1] += [mean]
                 plot_data[it][2] += [std]                        
@@ -86,7 +86,6 @@ class DataLoader(object):
             
             self.errorfill(plot_data[item][0], plot_data[item][1],
                       plot_data[item][2], label=item) 
-                      # marker="o",  )
             
         ax.legend()
         plt.ylim([0, 1])
@@ -112,7 +111,7 @@ class DataLoader(object):
         return np.mean(values_list), np.std(values_list)
     
     #-------------------------------------------------------------------------
-    def errorfill(self, x, y, yerr, label="", color=None, alpha_fill=0.1, 
+    def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
                   ax = None):
         x = np.array(x)
         y = np.array(y)
@@ -125,7 +124,7 @@ class DataLoader(object):
             ymax = y + yerr
         elif len(yerr) == 2:
             ymin, ymax = yerr
-        ax.plot(x, y, color=color, label=label)
+        ax.plot(x, y, color=color, label=label, marker=marker)
         ax.fill_between(x, ymax, ymin, color=color, alpha=alpha_fill)
         
     #-------------------------------------------------------------------------

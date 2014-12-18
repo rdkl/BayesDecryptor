@@ -53,10 +53,9 @@ class DataLoader(object):
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def plot_by_parameter_and_iterations(self):
+    def plot_stats_by_parameter_and_iterations(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        
         
         iteration_number_keys = set({})
         for parameter in self.__data:
@@ -68,7 +67,7 @@ class DataLoader(object):
         for parameter in self.__data:
             for it in self.__data[parameter].keys():
                 mean, std = \
-                    self.extract_data_by_parameter_and_iteration_number(
+                    self.extract_stats_by_parameter_and_iteration_number(
                                                                 parameter,
                                                                 it)
                 plot_data[it][0] += [parameter]
@@ -95,29 +94,19 @@ class DataLoader(object):
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def extract_data_by_parameter(self, parameter):
+    def extract_stats_by_parameter(self, parameter):
         
         values_list = []
         
         for item in self.__data[parameter]:
             values_list += self.__data[parameter][item]
-        zero_ratio = 0.0;
-        
-        for val in values_list:
-            if val == 0:
-                zero_ratio += 1.0
-        # return zero_ratio / len(values_list), np.std(values_list)
         return np.mean(values_list), np.std(values_list)
     #-------------------------------------------------------------------------
-    def extract_data_by_parameter_and_iteration_number(self, parameter,
-                                                       it):
+    def extract_stats_by_parameter_and_iteration_number(self, 
+                                                               parameter,
+                                                               it):
         values_list = self.__data[parameter][it]
-        zero_ratio = 0.0;
-        for val in values_list:
-            if val == 0:
-                zero_ratio += 1.0
-        return zero_ratio / len(values_list), np.std(values_list)
-        # return np.mean(values_list), np.std(values_list)
+        return np.mean(values_list), np.std(values_list)
     
     #-------------------------------------------------------------------------
     def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
@@ -141,4 +130,4 @@ class DataLoader(object):
 
 if __name__ == "__main__":
     dl = DataLoader('../../data/main_task_5_2.txt')
-    dl.plot_by_parameter_and_iterations()
+    dl.plot_stats_by_parameter_and_iterations()

@@ -47,7 +47,7 @@ class DataLoader(object):
             print mean
         
         plt.ylim([0, 1])
-        plt.xlabel("parameter")
+        plt.xlabel("Parameter")
         plt.ylabel("Error ratio")
         plt.grid(True)
         plt.show(True)
@@ -89,7 +89,7 @@ class DataLoader(object):
             
         ax.legend()
         plt.ylim([0, 1])
-        plt.xlabel("parameter")
+        plt.xlabel("Parameter")
         plt.ylabel("Error ratio")
         plt.grid(True)
         plt.show(True)
@@ -101,14 +101,23 @@ class DataLoader(object):
         
         for item in self.__data[parameter]:
             values_list += self.__data[parameter][item]
+        zero_ratio = 0.0;
         
+        for val in values_list:
+            if val == 0:
+                zero_ratio += 1.0
+        # return zero_ratio / len(values_list), np.std(values_list)
         return np.mean(values_list), np.std(values_list)
-    
     #-------------------------------------------------------------------------
     def extract_data_by_parameter_and_iteration_number(self, parameter,
                                                        it):
         values_list = self.__data[parameter][it]
-        return np.mean(values_list), np.std(values_list)
+        zero_ratio = 0.0;
+        for val in values_list:
+            if val == 0:
+                zero_ratio += 1.0
+        return zero_ratio / len(values_list), np.std(values_list)
+        # return np.mean(values_list), np.std(values_list)
     
     #-------------------------------------------------------------------------
     def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
@@ -131,5 +140,5 @@ class DataLoader(object):
 ##############################################################################
 
 if __name__ == "__main__":
-    dl = DataLoader()
+    dl = DataLoader('../../data/main_task_5_2.txt')
     dl.plot_by_parameter_and_iterations()

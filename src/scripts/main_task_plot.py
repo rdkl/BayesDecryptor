@@ -8,7 +8,7 @@ from configglue.inischema.attributed import marker
 
 ##############################################################################
 class DataLoader(object):
-    # Line format: ["number of iterations" "parameter" "values_list"] 
+    # Line format: ["parameter" "number of iterations" "values_list"] 
     def __init__(self, path_to_file="../../data/main_task_5_2.txt"):
         self.__data = collections.Counter()
         
@@ -21,7 +21,7 @@ class DataLoader(object):
                     continue
                 
                 try:
-                    number_of_iterations = int(line[1])
+                    number_of_iterations = line[1]
                     parameter = int(line[0])
                     values_list = [float(item) for item in line[2:]]
                 

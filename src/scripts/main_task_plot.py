@@ -1,13 +1,15 @@
 import collections
+from itertools import izip
 
 import matplotlib.pyplot as plt
 import numpy as np
+from configglue.inischema.attributed import marker
 
 
 ##############################################################################
 class DataLoader(object):
     # Line format: ["number of iterations" "parameter" "values_list"] 
-    def __init__(self, path_to_file="../../data/main_task_4.txt"):
+    def __init__(self, path_to_file="../../data/main_task_5_2.txt"):
         self.__data = collections.Counter()
         
         with open(path_to_file, "r") as f:
@@ -19,7 +21,7 @@ class DataLoader(object):
                     continue
                 
                 try:
-                    number_of_iterations = int(line[1])
+                    number_of_iterations = line[1]
                     parameter = int(line[0])
                     values_list = [float(item) for item in line[2:]]
                 
@@ -45,67 +47,132 @@ class DataLoader(object):
             print mean
         
         plt.ylim([0, 1])
-        plt.xlabel("parameter")
+        plt.xlabel("Parameter")
         plt.ylabel("Error ratio")
         plt.grid(True)
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def plot_by_parameter_and_iterations(self):
+    def plot_stats_by_parameter_and_iterations(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        
         
         iteration_number_keys = set({})
         for parameter in self.__data:
             for item in self.__data[parameter].keys():
                 iteration_number_keys.add(item)
         
-        plot_data = {item : [[], []] for item in iteration_number_keys}
+        plot_data = {item : [[], [], []] for item in iteration_number_keys}
         
         for parameter in self.__data:
             for it in self.__data[parameter].keys():
                 mean, std = \
-                    self.extract_data_by_parameter_and_iteration_number(
+                    self.extract_stats_by_parameter_and_iteration_number(
                                                                 parameter,
                                                                 it)
-                ax.annotate("%.2f" % std, xy = (parameter + 10, mean))
                 plot_data[it][0] += [parameter]
                 plot_data[it][1] += [mean]
-                
+                plot_data[it][2] += [std]                        
+        
         for item in plot_data:
-            plt.scatter(plot_data[item][0], plot_data[item][1], marker="o", 
-                        label=item, color=np.random.rand(1, 3), )
-        print 4
+            sorted_lists = sorted(izip(plot_data[item][0], 
+                                       plot_data[item][1],
+                                       plot_data[item][2]), 
+                                  reverse=True, 
+                                  key=lambda x: x[0])
+            plot_data[item][0], plot_data[item][1], plot_data[item][2] = \
+                [[x[i] for x in sorted_lists] for i in range(3)]
+            
+            self.errorfill(plot_data[item][0], plot_data[item][1],
+                      plot_data[item][2], label=item) 
             
         ax.legend()
         plt.ylim([0, 1])
-        plt.xlabel("parameter")
+        plt.xlabel("Parameter")
         plt.ylabel("Error ratio")
         plt.grid(True)
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def extract_data_by_parameter(self, parameter):
+    def plot_zeros_ratio_by_parameter_and_iterations(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        
+        iteration_number_keys = set({})
+        for parameter in self.__data:
+            for item in self.__data[parameter].keys():
+                iteration_number_keys.add(item)
+        
+        plot_data = {item : [[], [], []] for item in iteration_number_keys}
+        
+        for parameter in self.__data:
+            for it in self.__data[parameter].keys():
+                zeros_ratio = \
+                    self.extract_zeros_ratio_by_parameter_and_iteration_number(
+                                                            parameter,
+                                                            it)
+            
+                plot_data[it][0] += [parameter]
+                plot_data[it][1] += [zeros_ratio]
+        
+        for item in plot_data:
+            sorted_lists = sorted(izip(plot_data[item][0], 
+                                       plot_data[item][1]), 
+                                  reverse=True, 
+                                  key=lambda x: x[0])
+            plot_data[item][0], plot_data[item][1] = \
+                [[x[i] for x in sorted_lists] for i in [0, 1]]
+            
+            plt.plot(plot_data[item][0], plot_data[item][1], label=item, 
+                     marker = "o")
+            
+        ax.legend()
+        plt.ylim([0, 1])
+        plt.xlabel("Parameter")
+        plt.ylabel("Ratio of correct permutations")
+        plt.grid(True)
+        plt.show(True)
+    
+    #-------------------------------------------------------------------------
+    def extract_stats_by_parameter(self, parameter):
         
         values_list = []
         
         for item in self.__data[parameter]:
             values_list += self.__data[parameter][item]
-        
         return np.mean(values_list), np.std(values_list)
-    
     #-------------------------------------------------------------------------
-    def extract_data_by_parameter_and_iteration_number(self, parameter,
-                                                       it):
-        
-        
+    def extract_stats_by_parameter_and_iteration_number(self, parameter, it):
         values_list = self.__data[parameter][it]
         return np.mean(values_list), np.std(values_list)
     
     #-------------------------------------------------------------------------
+    def extract_zeros_ratio_by_parameter_and_iteration_number(self, 
+                                                               parameter, it):
+        values_list = np.array(self.__data[parameter][it])
+        return float(sum(values_list == 0)) / len(values_list)
+    
+    #-------------------------------------------------------------------------
+    def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
+                  ax = None):
+        x = np.array(x)
+        y = np.array(y)
+        yerr = np.array(yerr)
+        ax = ax if ax is not None else plt.gca()
+        if color is None:
+            color = ax._get_lines.color_cycle.next()
+        if np.isscalar(yerr) or len(yerr) == len(y):
+            ymin = y - yerr
+            ymax = y + yerr
+        elif len(yerr) == 2:
+            ymin, ymax = yerr
+        ax.plot(x, y, color=color, label=label, marker=marker)
+        ax.fill_between(x, ymax, ymin, color=color, alpha=alpha_fill)
+        
+    #-------------------------------------------------------------------------
 ##############################################################################
 
 if __name__ == "__main__":
-    dl = DataLoader()
-    dl.plot_by_parameter_and_iterations()
+    dl = DataLoader('../../data/main_task_5_3.txt')
+    # dl.plot_zeros_ratio_by_parameter_and_iterations()
+    dl.plot_stats_by_parameter_and_iterations()

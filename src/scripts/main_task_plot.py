@@ -3,13 +3,12 @@ from itertools import izip
 
 import matplotlib.pyplot as plt
 import numpy as np
-from configglue.inischema.attributed import marker
 
 
 ##############################################################################
 class DataLoader(object):
-    # Line format: ["number of iterations" "parameter" "values_list"] 
-    def __init__(self, path_to_file="../../data/main_task_5_2.txt"):
+    # Line format: ["parameter" "number of iterations" "values_list"] 
+    def __init__(self, path_to_file="../../data/main_task_5_3.txt"):
         self.__data = collections.Counter()
         
         with open(path_to_file, "r") as f:
@@ -53,7 +52,7 @@ class DataLoader(object):
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def plot_stats_by_parameter_and_iterations(self):
+    def plot_stats_by_parameter_and_iterations(self, log_scale=False):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         
@@ -91,10 +90,12 @@ class DataLoader(object):
         plt.xlabel("Parameter")
         plt.ylabel("Error ratio")
         plt.grid(True)
+        if log_scale:
+            ax.set_xscale("log")
         plt.show(True)
     
     #-------------------------------------------------------------------------
-    def plot_zeros_ratio_by_parameter_and_iterations(self):
+    def plot_zeros_ratio_by_parameter_and_iterations(self, log_scale=False):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         
@@ -131,6 +132,8 @@ class DataLoader(object):
         plt.xlabel("Parameter")
         plt.ylabel("Ratio of correct permutations")
         plt.grid(True)
+        if log_scale:
+            ax.set_xscale("log")
         plt.show(True)
     
     #-------------------------------------------------------------------------
@@ -153,12 +156,12 @@ class DataLoader(object):
         return float(sum(values_list == 0)) / len(values_list)
     
     #-------------------------------------------------------------------------
-    def errorfill(self, x, y, yerr, label="", marker="o", color=None, alpha_fill=0.1, 
-                  ax = None):
+    def errorfill(self, x, y, yerr, label="", marker="o", color=None, 
+                  alpha_fill=0.1, ax = None):
         x = np.array(x)
         y = np.array(y)
         yerr = np.array(yerr)
-        ax = ax if ax is not None else plt.gca()
+        ax = plt.gca()
         if color is None:
             color = ax._get_lines.color_cycle.next()
         if np.isscalar(yerr) or len(yerr) == len(y):
@@ -173,6 +176,6 @@ class DataLoader(object):
 ##############################################################################
 
 if __name__ == "__main__":
-    dl = DataLoader('../../data/main_task_5_3.txt')
-    # dl.plot_zeros_ratio_by_parameter_and_iterations()
+    dl = DataLoader()
     dl.plot_stats_by_parameter_and_iterations()
+    dl.plot_zeros_ratio_by_parameter_and_iterations(True)

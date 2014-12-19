@@ -8,8 +8,10 @@ test_msg = "_only_improvements_4"
 permGenerator = MetropolisPermutationGenerator(print_info = False)
 permGenerator.set_train_data()
 
+size = 51200
+
 f = open("../data/oliver_twist.txt", "r")
-line_list = f.readlines()[0:12801]
+line_list = f.readlines()[0:size+1]
 permGenerator.set_encrypted_data(line_list)
 
 unigram_counter = Counter()
@@ -26,24 +28,30 @@ for line in line_list:
 for key in unigram_counter.keys():
     unigram_counter[key] /= unigram_number
     
-err_mean = 0
-num_iter = 50
+err_mean = 0.0
+num_restarts = 30
+num_iter = 2000
 
-for i in xrange(num_iter):
-    error = 0.0
+error = []
+
+for i in xrange(num_restarts):
+    error += [0.0]
     
-    perm = permGenerator.generate_permutation(2500)
-    for key in sorted(perm.keys()):
-        print key, perm[key]
+    perm = permGenerator.generate_permutation(num_iter)
+    #for key in sorted(perm.keys()):
+        #print key, perm[key]
         
-    with open('../data/perm_metropolis' + str(test_msg) + '.txt', 
-              'w') as f:
-          for key in sorted(perm.keys()):
-              print >>f, key, perm[key]
-              if key != perm[key]:
-                  error += unigram_counter[key]
-                          
-    print error
-    err_mean += error/num_iter
+    for key in sorted(perm.keys()):
+        if key != perm[key]:
+            error[i] += unigram_counter[key]
+            
+    err_mean += error[i]/num_restarts
+    print error[i]
+                
+with open('../data/main_task_4.txt', 'a') as g:
+    print >>g, size, num_iter, " ".join(map(str, error))
+
+g.close()
+f.close()
 
 print err_mean

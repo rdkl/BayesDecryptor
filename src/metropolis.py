@@ -4,10 +4,14 @@ import random
 import string
 
 from estimate_likelihood import estimate_likelihood
-from estimate_log_likelihood import estimate_log_likelihood
+from src.process_data import crypt_and_corrupt
+from estimate_log_likelihood_with_missed_letters \
+    import estimate_log_likelihood
 from process_data.get_bigram_frequency import get_bigram_frequency
+from src.process_data.crypt_and_corrupt import crypt_text
 
 
+#from estimate_log_likelihood import estimate_log_likelihood
 ##############################################################################
 class MetropolisPermutationGenerator(object):
     #-------------------------------------------------------------------------
@@ -42,7 +46,7 @@ class MetropolisPermutationGenerator(object):
                             ", but %s received" % (str(type(encrypted_file)))) 
     
         if type(encrypted_file) == str:
-            self.__encrypted_text = open(encrypted_file, "r").readlines()
+            self.__encrypted_text = open(encrypted_file, "r").readlines()[:1000]
         if type(encrypted_file) == list:
             self.__encrypted_text = encrypted_file
             
@@ -162,6 +166,7 @@ class MetropolisPermutationGenerator(object):
                     best_perm = current_perm
                     best_log_likelihood = current_log_likelihood
                     print >>self.__test_file, i, best_log_likelihood
+                    
 
                 if i % 100 == 0 and self.__print_info:
                     print "Iteration: ", i
@@ -190,9 +195,9 @@ class MetropolisPermutationGenerator(object):
     
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-    permGenerator = MetropolisPermutationGenerator(print_info=False)
+    permGenerator = MetropolisPermutationGenerator(print_info=True)
     permGenerator.set_train_data()
-    permGenerator.set_encrypted_data()
+    permGenerator.set_encrypted_data(crypt_text(path="../data/oliver_twist.txt"))
     
     perm = permGenerator.generate_permutation(2500)
     for key in sorted(perm.keys()):

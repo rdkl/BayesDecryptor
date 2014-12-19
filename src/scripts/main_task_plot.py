@@ -112,6 +112,7 @@ class DataLoader(object):
                     self.extract_zeros_ratio_by_parameter_and_iteration_number(
                                                             parameter,
                                                             it)
+            
                 plot_data[it][0] += [parameter]
                 plot_data[it][1] += [zeros_ratio]
         

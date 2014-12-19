@@ -1,6 +1,7 @@
 import math
 
 from process_data.get_bigram_frequency import get_bigram_frequency
+from cv2 import threshold
 
 
 #-----------------------------------------------------------------------------
@@ -13,7 +14,8 @@ def estimate_log_likelihood(text, bigram_dist, perm, threshold = 10**(-4)):
     for line in text:
         line = line.strip()
         for word in line.split():
-            log_likelihood += math.log(bigram_dist["unigram"][word[0]])
+            log_likelihood += math.log(max(bigram_dist["unigram"][word[0]],
+                                           threshold))
             
             for i in xrange(len(word) - 1):
                 bigram_probability = bigram_dist[perm[word[i]] + \
@@ -26,6 +28,6 @@ def estimate_log_likelihood(text, bigram_dist, perm, threshold = 10**(-4)):
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
     print estimate_log_likelihood(["bfbf aa"], 
-                              get_bigram_frequency("../data/test.txt"), 
+                              get_bigram_frequency("../data/war_and_peace.txt"), 
                               {"a":"f", "b":"a", "f":"b"})
     

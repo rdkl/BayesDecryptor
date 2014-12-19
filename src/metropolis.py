@@ -4,11 +4,11 @@ import random
 import string
 
 from estimate_likelihood import estimate_likelihood
-from src.process_data import crypt_and_corrupt
+from process_data import crypt_and_corrupt
 from estimate_log_likelihood_with_missed_letters \
     import estimate_log_likelihood
 from process_data.get_bigram_frequency import get_bigram_frequency
-from src.process_data.crypt_and_corrupt import crypt_text
+from process_data.crypt_and_corrupt import crypt_text
 
 
 #from estimate_log_likelihood import estimate_log_likelihood
@@ -197,7 +197,8 @@ class MetropolisPermutationGenerator(object):
 if __name__ == "__main__":
     permGenerator = MetropolisPermutationGenerator(print_info=True)
     permGenerator.set_train_data()
-    permGenerator.set_encrypted_data(crypt_text(path="../data/oliver_twist.txt"))
+    permGenerator.set_encrypted_data(
+                     crypt_text(path="../data/oliver_twist.txt")[:5000])
     
     perm = permGenerator.generate_permutation(2500)
     for key in sorted(perm.keys()):

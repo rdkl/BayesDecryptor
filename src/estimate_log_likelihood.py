@@ -1,8 +1,6 @@
 import math
 
 from process_data.get_bigram_frequency import get_bigram_frequency
-from cv2 import threshold
-
 
 #-----------------------------------------------------------------------------
 def estimate_log_likelihood(text, bigram_dist, perm, threshold = 10**(-4)):

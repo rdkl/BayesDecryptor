@@ -1,7 +1,7 @@
 import math
 import string
 
-from src.process_data.get_bigram_frequency import get_bigram_frequency
+from process_data.get_bigram_frequency import get_bigram_frequency
 
 
 #-----------------------------------------------------------------------------

@@ -43,10 +43,10 @@ correct_perm = {}
 alph = string.ascii_lowercase
 correct_perm = {i:i for i in alph}
 
-num_iter = 50
+num_iter = 100 # previous 50
 words_error = {}
 found_perm = {}
-for number_of_words in xrange(10, 541, 40):
+for number_of_words in xrange(200, 1001, 100):
     unigram_counter = get_unigramm_counter(text[1000:1001 + number_of_words])
     permGenerator.set_encrypted_data(text[1000:1001+number_of_words])
     error = range(num_iter)
@@ -58,11 +58,13 @@ for number_of_words in xrange(10, 541, 40):
     words_error[number_of_words] = error
     print found_perm[np.argmin(error)], np.min(error), np.mean(error), np.var(error)
     
-with open('../data/main_task_5_greedy_from1000.txt', 'w') as f:
+
+with open('../data/main_task_5_greedy_from1000_st5_1000.txt', 'w') as f:
     for key in sorted(words_error.keys()):
-        print >>f, key, str(1), " ".join(map(str, words_error[key]))
+        print >>f, key, 'Greedy', " ".join(map(str, words_error[key]))
 # metropolis - 0
 # greedy - 1
 # 3 - result to use
 # from1000 - start from 1000th word in text
-
+# st5 - step in words = 5
+# _1000 - up to 1000
